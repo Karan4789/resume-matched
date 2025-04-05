@@ -106,7 +106,8 @@ def get_gemini_suggestions(resume_text, job_description, matched_skills, missing
         if not Config.GEMINI_API_KEY:
             return ["Enable Gemini API with a key to get personalized suggestions"]
         
-        model = genai.GenerativeModel('gemini-1.0-pro')
+        # Using Gemini-1.0-flash-lite as requested
+        model = genai.GenerativeModel('gemini-1.0-flash-lite')
         
         prompt = f"""
         As a resume optimization expert, analyze this resume against the job description and provide 
