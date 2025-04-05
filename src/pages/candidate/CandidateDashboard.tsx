@@ -1,24 +1,66 @@
-
-import { useEffect, useState } from 'react';
-import DashboardLayout from '@/components/layouts/DashboardLayout';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { ArrowUpRight, BarChart, FileText, BookOpen, ArrowDown, ArrowUp, Upload } from 'lucide-react';
-import { Progress } from '@/components/ui/progress';
-import { Link } from 'react-router-dom';
-import { resumeAnalyses } from '@/services/mockData';
+import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { getDashboardStats } from "@/services/api";
+import { useAnalysis } from "@/contexts/AnalysisContext";
+import DashboardLayout from "@/components/layouts/DashboardLayout";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import {
+  ArrowUpRight,
+  BarChart,
+  FileText,
+  BookOpen,
+  ArrowDown,
+  ArrowUp,
+  Upload,
+} from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import { Link } from "react-router-dom";
+import { resumeAnalyses } from "@/services/mockData";
 
 const CandidateDashboard = () => {
-  const [analyses, setAnalyses] = useState(resumeAnalyses);
+  const { data: dashboardData, isLoading } = useQuery({
+    queryKey: ["dashboardStats"],
+    queryFn: getDashboardStats,
+  });
+
+  const stats = {
+    submissions: dashboardData?.stats.total_submissions ?? 0,
+    avgMatch: dashboardData?.stats.avg_match_score ?? 0,
+    avgATS: dashboardData?.stats.avg_ats_score ?? 0,
+    missingSkills: dashboardData?.stats.common_missing_skills.length ?? 0,
+  };
+
+  // Convert recent submissions to analyses format
+  const recentAnalyses =
+    dashboardData?.recent_submissions.map((submission) => ({
+      id: crypto.randomUUID(),
+      jobTitle: submission.job_description.split("\n")[0],
+      matchPercentage: submission.analysis_result.match_score,
+      atsScore: submission.analysis_result.ats_score,
+      matchedSkills: submission.analysis_result.matched_skills,
+      missingSkills: submission.analysis_result.missing_skills,
+      analysisDate: submission.created_at,
+    })) ?? [];
 
   return (
     <DashboardLayout>
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Candidate Dashboard</h1>
+            <h1 className="text-3xl font-bold tracking-tight">
+              Candidate Dashboard
+            </h1>
             <p className="text-muted-foreground mt-2">
-              Monitor your resume performance and get personalized recommendations.
+              Monitor your resume performance and get personalized
+              recommendations.
             </p>
           </div>
           <Button asChild className="bg-blue-600 hover:bg-blue-700">
@@ -39,9 +81,11 @@ const CandidateDashboard = () => {
               <FileText className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{analyses.length}</div>
+              <div className="text-2xl font-bold">{stats.submissions}</div>
               <p className="text-xs text-muted-foreground mt-1">
-                +1 from last week
+                {stats.submissions > 0
+                  ? "+1 from last week"
+                  : "No submissions yet"}
               </p>
             </CardContent>
           </Card>
@@ -54,15 +98,16 @@ const CandidateDashboard = () => {
               <BarChart className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
-                {Math.round(
-                  analyses.reduce((acc, curr) => acc + curr.matchPercentage, 0) /
-                    analyses.length
-                )}%
-              </div>
+              <div className="text-2xl font-bold">{stats.avgMatch}%</div>
               <p className="text-xs text-muted-foreground flex items-center mt-1">
-                <ArrowUp className="h-3 w-3 text-green-500 mr-1" /> 
-                10% increase
+                {stats.avgMatch > 0 ? (
+                  <>
+                    <ArrowUp className="h-3 w-3 text-green-500 mr-1" />
+                    10% increase
+                  </>
+                ) : (
+                  "Upload resume to see match score"
+                )}
               </p>
             </CardContent>
           </Card>
@@ -75,15 +120,16 @@ const CandidateDashboard = () => {
               <BookOpen className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
-                {Math.round(
-                  analyses.reduce((acc, curr) => acc + curr.atsScore, 0) /
-                    analyses.length
-                )}%
-              </div>
+              <div className="text-2xl font-bold">{stats.avgATS}%</div>
               <p className="text-xs text-muted-foreground flex items-center mt-1">
-                <ArrowUp className="h-3 w-3 text-green-500 mr-1" /> 
-                5% increase
+                {stats.avgATS > 0 ? (
+                  <>
+                    <ArrowUp className="h-3 w-3 text-green-500 mr-1" />
+                    5% increase
+                  </>
+                ) : (
+                  "Upload resume to see ATS score"
+                )}
               </p>
             </CardContent>
           </Card>
@@ -96,12 +142,16 @@ const CandidateDashboard = () => {
               <ArrowDown className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
-                {analyses.reduce((acc, curr) => acc + curr.missingSkills.length, 0)}
-              </div>
+              <div className="text-2xl font-bold">{stats.missingSkills}</div>
               <p className="text-xs text-muted-foreground flex items-center mt-1">
-                <ArrowDown className="h-3 w-3 text-green-500 mr-1" /> 
-                3 fewer than before
+                {stats.missingSkills > 0 ? (
+                  <>
+                    <ArrowDown className="h-3 w-3 text-green-500 mr-1" />3 fewer
+                    than before
+                  </>
+                ) : (
+                  "Upload resume to see missing skills"
+                )}
               </p>
             </CardContent>
           </Card>
@@ -117,7 +167,7 @@ const CandidateDashboard = () => {
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">
-            {analyses.map((analysis) => (
+            {recentAnalyses.map((analysis) => (
               <Card key={analysis.id} className="resume-card">
                 <CardHeader className="pb-2">
                   <div className="flex justify-between">
@@ -126,8 +176,11 @@ const CandidateDashboard = () => {
                       {analysis.matchPercentage}%
                     </span>
                   </div>
-                  <CardDescription>{new Date(analysis.analysisDate).toLocaleDateString()}</CardDescription>
+                  <CardDescription>
+                    {new Date(analysis.analysisDate).toLocaleDateString()}
+                  </CardDescription>
                 </CardHeader>
+
                 <CardContent>
                   <div className="space-y-2">
                     <div className="space-y-1">
@@ -135,20 +188,28 @@ const CandidateDashboard = () => {
                         <span>Match Score</span>
                         <span>{analysis.matchPercentage}%</span>
                       </div>
-                      <Progress value={analysis.matchPercentage} className="bg-gray-200 h-2" />
+                      <Progress
+                        value={analysis.matchPercentage}
+                        className="bg-gray-200 h-2"
+                      />
                     </div>
-                    
+
                     <div className="space-y-1">
                       <div className="flex justify-between text-sm">
                         <span>ATS Score</span>
                         <span>{analysis.atsScore}%</span>
                       </div>
-                      <Progress value={analysis.atsScore} className="bg-gray-200 h-2" />
+                      <Progress
+                        value={analysis.atsScore}
+                        className="bg-gray-200 h-2"
+                      />
                     </div>
                   </div>
-                  
+
                   <div className="mt-4">
-                    <h4 className="text-sm font-medium mb-2">Skills Overview</h4>
+                    <h4 className="text-sm font-medium mb-2">
+                      Skills Overview
+                    </h4>
                     <div className="flex flex-wrap gap-1">
                       {analysis.matchedSkills.slice(0, 3).map((skill, idx) => (
                         <span key={idx} className="skill-badge skill-matched">
@@ -163,6 +224,7 @@ const CandidateDashboard = () => {
                     </div>
                   </div>
                 </CardContent>
+
                 <CardFooter>
                   <Button variant="ghost" className="w-full" asChild>
                     <Link to={`/candidate-dashboard/resume/${analysis.id}`}>
@@ -176,38 +238,43 @@ const CandidateDashboard = () => {
               </Card>
             ))}
           </div>
-        </div>
 
-        {/* Recommendations */}
-        <div>
-          <h2 className="text-xl font-semibold mb-4">Recommended Improvements</h2>
-          <Card>
-            <CardContent className="p-6">
-              <ul className="space-y-3">
-                {analyses.flatMap(a => a.suggestions).slice(0, 5).map((suggestion, idx) => (
-                  <li key={idx} className="flex items-start">
-                    <div className="h-6 w-6 rounded-full bg-blue-600 flex items-center justify-center mr-3 flex-shrink-0">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        className="h-3 w-3 text-white"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                    </div>
-                    <span>{suggestion}</span>
-                  </li>
-                ))}
-              </ul>
-            </CardContent>
-          </Card>
+          {/* Recommendations */}
+          <div>
+            <h2 className="text-xl font-semibold mb-4">
+              Recommended Improvements
+            </h2>
+            <Card>
+              <CardContent className="p-6">
+                <ul className="space-y-3">
+                  {recentAnalyses
+                    .flatMap((a) => a.suggestions)
+                    .slice(0, 5)
+                    .map((suggestion, idx) => (
+                      <li key={idx} className="flex items-start">
+                        <div className="h-6 w-6 rounded-full bg-blue-600 flex items-center justify-center mr-3 flex-shrink-0">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            className="h-3 w-3 text-white"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M5 13l4 4L19 7"
+                            />
+                          </svg>
+                        </div>
+                        <span>{suggestion}</span>
+                      </li>
+                    ))}
+                </ul>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     </DashboardLayout>
