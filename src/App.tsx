@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -19,6 +18,7 @@ import ResumeDetail from "./pages/candidate/ResumeDetail";
 import MyResumes from "./pages/candidate/MyResumes";
 import JobMatches from "./pages/candidate/JobMatches";
 import ResumeFeedback from "./pages/candidate/ResumeFeedback";
+import ResumeAnalysisResults from "./pages/candidate/ResumeAnalysisResults";
 
 // HR pages
 import HRDashboard from "./pages/hr/HRDashboard";
@@ -40,22 +40,56 @@ const App = () => (
             <Route path="/register" element={<Register />} />
 
             {/* Protected candidate routes */}
-            <Route element={<ProtectedRoute allowedRoles={['candidate']} />}>
-              <Route path="/candidate-dashboard" element={<CandidateDashboard />} />
-              <Route path="/candidate-dashboard/resumes" element={<MyResumes />} />
-              <Route path="/candidate-dashboard/upload" element={<ResumeUpload />} />
-              <Route path="/candidate-dashboard/resume/:id" element={<ResumeDetail />} />
-              <Route path="/candidate-dashboard/job-matches" element={<JobMatches />} />
-              <Route path="/candidate-dashboard/feedback" element={<ResumeFeedback />} />
+            <Route element={<ProtectedRoute allowedRoles={["candidate"]} />}>
+              <Route
+                path="/candidate-dashboard"
+                element={<CandidateDashboard />}
+              />
+              <Route
+                path="/candidate-dashboard/resumes"
+                element={<MyResumes />}
+              />
+              <Route
+                path="/candidate-dashboard/upload"
+                element={<ResumeUpload />}
+              />
+              <Route
+                path="/candidate-dashboard/resume/:id"
+                element={<ResumeDetail />}
+              />
+              <Route
+                path="/candidate-dashboard/job-matches"
+                element={<JobMatches />}
+              />
+              <Route
+                path="/candidate-dashboard/feedback"
+                element={<ResumeFeedback />}
+              />
+              <Route
+                path="/candidate-dashboard/resume/analysis"
+                element={<ResumeAnalysisResults />}
+              />
             </Route>
 
             {/* Protected HR routes */}
-            <Route element={<ProtectedRoute allowedRoles={['hr']} />}>
+            <Route element={<ProtectedRoute allowedRoles={["hr"]} />}>
               <Route path="/hr-dashboard" element={<HRDashboard />} />
-              <Route path="/hr-dashboard/candidates" element={<HRDashboard />} />
-              <Route path="/hr-dashboard/candidate/:id" element={<CandidateDetail />} />
-              <Route path="/hr-dashboard/job-postings" element={<HRDashboard />} />
-              <Route path="/hr-dashboard/job-posting/:id" element={<HRDashboard />} />
+              <Route
+                path="/hr-dashboard/candidates"
+                element={<HRDashboard />}
+              />
+              <Route
+                path="/hr-dashboard/candidate/:id"
+                element={<CandidateDetail />}
+              />
+              <Route
+                path="/hr-dashboard/job-postings"
+                element={<HRDashboard />}
+              />
+              <Route
+                path="/hr-dashboard/job-posting/:id"
+                element={<HRDashboard />}
+              />
               <Route path="/hr-dashboard/analytics" element={<HRDashboard />} />
             </Route>
 
