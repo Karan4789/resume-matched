@@ -26,7 +26,7 @@ const DashboardHeader = () => {
   return (
     <header className="bg-white shadow-sm border-b h-16 flex items-center px-4 md:px-6">
       <div className="flex items-center space-x-4">
-        <SidebarTrigger asChild>
+        <SidebarTrigger>
           <Button variant="ghost" size="icon" className="md:hidden">
             <Menu className="h-5 w-5" />
             <span className="sr-only">Toggle sidebar</span>

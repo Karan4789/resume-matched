@@ -49,7 +49,7 @@ const Sidebar = () => {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton
-                  active={location.pathname.includes('dashboard')}
+                  className={location.pathname.includes('dashboard') ? "bg-accent" : ""}
                   onClick={() => navigate(isHR ? '/hr-dashboard' : '/candidate-dashboard')}
                 >
                   <Home className="w-5 h-5" />
@@ -67,7 +67,7 @@ const Sidebar = () => {
               <SidebarMenu>
                 <SidebarMenuItem>
                   <SidebarMenuButton
-                    active={location.pathname === '/hr-dashboard/candidates'}
+                    className={location.pathname === '/hr-dashboard/candidates' ? "bg-accent" : ""}
                     onClick={() => navigate('/hr-dashboard/candidates')}
                   >
                     <Users className="w-5 h-5" />
@@ -76,7 +76,7 @@ const Sidebar = () => {
                 </SidebarMenuItem>
                 <SidebarMenuItem>
                   <SidebarMenuButton
-                    active={location.pathname === '/hr-dashboard/job-postings'}
+                    className={location.pathname === '/hr-dashboard/job-postings' ? "bg-accent" : ""}
                     onClick={() => navigate('/hr-dashboard/job-postings')}
                   >
                     <Briefcase className="w-5 h-5" />
@@ -85,7 +85,7 @@ const Sidebar = () => {
                 </SidebarMenuItem>
                 <SidebarMenuItem>
                   <SidebarMenuButton
-                    active={location.pathname === '/hr-dashboard/analytics'}
+                    className={location.pathname === '/hr-dashboard/analytics' ? "bg-accent" : ""}
                     onClick={() => navigate('/hr-dashboard/analytics')}
                   >
                     <BarChart className="w-5 h-5" />
@@ -102,7 +102,7 @@ const Sidebar = () => {
               <SidebarMenu>
                 <SidebarMenuItem>
                   <SidebarMenuButton
-                    active={location.pathname === '/candidate-dashboard/resumes'}
+                    className={location.pathname === '/candidate-dashboard/resumes' ? "bg-accent" : ""}
                     onClick={() => navigate('/candidate-dashboard/resumes')}
                   >
                     <FileText className="w-5 h-5" />
@@ -111,7 +111,7 @@ const Sidebar = () => {
                 </SidebarMenuItem>
                 <SidebarMenuItem>
                   <SidebarMenuButton
-                    active={location.pathname === '/candidate-dashboard/job-matches'}
+                    className={location.pathname === '/candidate-dashboard/job-matches' ? "bg-accent" : ""}
                     onClick={() => navigate('/candidate-dashboard/job-matches')}
                   >
                     <Briefcase className="w-5 h-5" />
@@ -120,7 +120,7 @@ const Sidebar = () => {
                 </SidebarMenuItem>
                 <SidebarMenuItem>
                   <SidebarMenuButton
-                    active={location.pathname === '/candidate-dashboard/feedback'}
+                    className={location.pathname === '/candidate-dashboard/feedback' ? "bg-accent" : ""}
                     onClick={() => navigate('/candidate-dashboard/feedback')}
                   >
                     <MessageSquare className="w-5 h-5" />
@@ -138,7 +138,7 @@ const Sidebar = () => {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton
-                  active={location.pathname === '/profile'}
+                  className={location.pathname === '/profile' ? "bg-accent" : ""}
                   onClick={() => navigate('/profile')}
                 >
                   <User className="w-5 h-5" />
@@ -147,7 +147,7 @@ const Sidebar = () => {
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton
-                  active={location.pathname === '/settings'}
+                  className={location.pathname === '/settings' ? "bg-accent" : ""}
                   onClick={() => navigate('/settings')}
                 >
                   <Settings className="w-5 h-5" />
