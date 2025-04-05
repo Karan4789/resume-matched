@@ -21,17 +21,52 @@ const MyResumes = () => {
     queryFn: getDashboardStats,
   });
 
-  // Convert recent submissions to analyses format
+  // Convert recent submissions to analyses format with consistent IDs
   const analyses =
-    dashboardData?.recent_submissions.map((submission) => ({
-      id: crypto.randomUUID(),
-      jobTitle: submission.job_description.split("\n")[0],
-      matchPercentage: submission.analysis_result.match_score,
-      atsScore: submission.analysis_result.ats_score,
-      matchedSkills: submission.analysis_result.matched_skills,
-      missingSkills: submission.analysis_result.missing_skills,
-      analysisDate: submission.created_at,
-    })) ?? [];
+    dashboardData?.recent_submissions.map((submission) => {
+      // Generate consistent ID using base64 of job description and date
+      const id = btoa(
+        `${submission.job_description}-${submission.created_at}`
+      ).slice(0, 12);
+
+      return {
+        id,
+        jobTitle: submission.job_description.split("\n")[0],
+        matchPercentage: submission.analysis_result.match_score,
+        atsScore: submission.analysis_result.ats_score,
+        matchedSkills: submission.analysis_result.matched_skills,
+        missingSkills: submission.analysis_result.missing_skills,
+        analysisDate: submission.created_at,
+        // Include full analysis for state transfer
+        fullAnalysis: {
+          jobTitle: submission.job_description.split("\n")[0],
+          matchPercentage: submission.analysis_result.match_score,
+          atsScore: submission.analysis_result.ats_score,
+          matchedSkills: submission.analysis_result.matched_skills,
+          missingSkills: submission.analysis_result.missing_skills,
+          requiredSkills: submission.analysis_result.required_skills,
+          suggestions: [submission.analysis_result.feedback],
+          sections: {
+            experience: Math.round(submission.analysis_result.match_score),
+            education: Math.round(submission.analysis_result.ats_score),
+            skills: Math.round(
+              (submission.analysis_result.matched_skills.length /
+                (submission.analysis_result.matched_skills.length +
+                  submission.analysis_result.missing_skills.length)) *
+                100
+            ),
+            formatting: submission.analysis_result.ats_score,
+          },
+          keywordDensity: submission.analysis_result.extracted_skills.reduce(
+            (acc: any, skill: string) => {
+              acc[skill] = (acc[skill] || 0) + 1;
+              return acc;
+            },
+            {}
+          ),
+        },
+      };
+    }) ?? [];
 
   const handleDelete = (id: string) => {
     // Implement delete functionality if needed
@@ -132,7 +167,10 @@ const MyResumes = () => {
                   Delete
                 </Button>
                 <Button variant="outline" size="sm" asChild>
-                  <Link to={`/candidate-dashboard/resume/${analysis.id}`}>
+                  <Link
+                    to={`/candidate-dashboard/resume/${analysis.id}`}
+                    state={{ analysis: analysis.fullAnalysis }}
+                  >
                     <span className="flex items-center">
                       View Detailed Analysis
                       <ArrowUpRight className="ml-2 h-4 w-4" />

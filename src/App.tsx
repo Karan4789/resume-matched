@@ -20,6 +20,7 @@ import MyResumes from "./pages/candidate/MyResumes";
 import JobMatches from "./pages/candidate/JobMatches";
 import ResumeFeedback from "./pages/candidate/ResumeFeedback";
 import ResumeAnalysisResults from "./pages/candidate/ResumeAnalysisResults";
+import ResumeAnalysisDetail from "./pages/candidate/ResumeAnalysisDetail";
 
 // HR pages
 import HRDashboard from "./pages/hr/HRDashboard";
@@ -56,10 +57,6 @@ const App = () => (
                   element={<ResumeUpload />}
                 />
                 <Route
-                  path="/candidate-dashboard/resume/:id"
-                  element={<ResumeDetail />}
-                />
-                <Route
                   path="/candidate-dashboard/job-matches"
                   element={<JobMatches />}
                 />
@@ -70,6 +67,11 @@ const App = () => (
                 <Route
                   path="/candidate-dashboard/resume/analysis"
                   element={<ResumeAnalysisResults />}
+                />
+                {/* Move this route to the end to avoid conflicts */}
+                <Route
+                  path="/candidate-dashboard/resume/:id"
+                  element={<ResumeAnalysisDetail />}
                 />
               </Route>
 

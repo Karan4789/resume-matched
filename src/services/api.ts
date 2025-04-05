@@ -1,4 +1,13 @@
-import { API_BASE_URL } from "@/config";
+import axios from "axios";
+
+const API_URL = "http://localhost:5000/api";
+
+const api = axios.create({
+  baseURL: API_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
 
 export interface ResumeAnalysisRequest {
   job_description: string;
@@ -15,17 +24,24 @@ export interface ResumeAnalysisResponse {
   feedback: string;
 }
 
-interface DashboardStats {
-  recent_submissions: {
-    job_description: string;
-    analysis_result: {
-      match_score: number;
-      ats_score: number;
-      matched_skills: string[];
-      missing_skills: string[];
-    };
-    created_at: string;
-  }[];
+export interface AnalysisResult {
+  extracted_skills: string[];
+  required_skills: string[];
+  matched_skills: string[];
+  missing_skills: string[];
+  match_score: number;
+  ats_score: number;
+  feedback: string;
+}
+
+export interface Submission {
+  job_description: string;
+  analysis_result: AnalysisResult;
+  created_at: string;
+}
+
+export interface DashboardStats {
+  recent_submissions: Submission[];
   stats: {
     avg_match_score: number;
     avg_ats_score: number;
@@ -38,21 +54,11 @@ export const analyzeResume = async (
   data: ResumeAnalysisRequest
 ): Promise<ResumeAnalysisResponse> => {
   try {
-    const response = await fetch(`${API_BASE_URL}/analyze-resume`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-
-    const result = await response.json();
-
-    if (!response.ok) {
-      throw new Error(result.error || "Failed to analyze resume");
-    }
-
-    return result;
+    const response = await api.post<ResumeAnalysisResponse>(
+      "/analyze-resume",
+      data
+    );
+    return response.data;
   } catch (error) {
     console.error("Error analyzing resume:", error);
     throw error;
@@ -60,9 +66,11 @@ export const analyzeResume = async (
 };
 
 export const getDashboardStats = async (): Promise<DashboardStats> => {
-  const response = await fetch("http://localhost:5000/api/dashboard/stats");
-  if (!response.ok) {
-    throw new Error("Failed to fetch dashboard stats");
+  try {
+    const response = await api.get<DashboardStats>("/dashboard/stats");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching dashboard stats:", error);
+    throw error;
   }
-  return response.json();
 };
