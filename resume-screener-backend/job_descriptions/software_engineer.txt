@@ -1,0 +1,31 @@
+
+Software Engineer
+ABC Tech Solutions
+
+Position Overview:
+We are looking for a skilled Software Engineer to join our dynamic team. The ideal candidate will design, develop, and maintain high-quality software solutions, collaborate with cross-functional teams, and contribute to the full software development lifecycle.
+
+Required Skills:
+- Proficiency in Python, JavaScript, and React
+- Experience with RESTful API design and implementation
+- Knowledge of database systems (SQL and NoSQL)
+- Familiarity with Git version control
+- Understanding of software development methodologies
+- Strong problem-solving abilities
+- Excellent communication skills
+
+Responsibilities:
+- Design, develop, and maintain software applications
+- Write clean, maintainable, and efficient code
+- Debug and fix software issues
+- Collaborate with team members on project development
+- Participate in code reviews and technical discussions
+- Document software components and systems
+- Stay updated with emerging technologies and industry trends
+
+Qualifications:
+- Bachelor's degree in Computer Science, Engineering, or related field
+- 2+ years of experience in software development
+- Strong understanding of object-oriented programming principles
+- Experience with cloud platforms (AWS, Azure, or GCP) is a plus
+- Knowledge of containerization technologies (Docker, Kubernetes) is beneficial

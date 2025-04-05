@@ -15,13 +15,11 @@ import { useLocation, useNavigate } from "react-router-dom";
 import {
   BarChart,
   FileText,
-  Settings,
-  User,
-  Users,
   Briefcase,
   MessageSquare,
   Home,
   LogOut,
+  Upload,
 } from "lucide-react";
 
 const Sidebar = () => {
@@ -40,7 +38,16 @@ const Sidebar = () => {
     <ShadcnSidebar>
       <SidebarContent>
         <div className="px-4 py-6">
-          <h2 className="text-xl font-semibold text-brand">ResumeMatch AI</h2>
+          <div className="flex items-center">
+            <div className="mr-2 rounded-md bg-blue-600 p-1">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M18 6H5a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h13l4-3.5L18 6Z"></path>
+                <path d="M12 13v8"></path>
+                <path d="M12 3v3"></path>
+              </svg>
+            </div>
+            <h2 className="text-xl font-semibold text-blue-600">SkillSync</h2>
+          </div>
         </div>
         
         <SidebarGroup>
@@ -49,7 +56,7 @@ const Sidebar = () => {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton
-                  className={location.pathname.includes('dashboard') ? "bg-accent" : ""}
+                  className={location.pathname.includes('dashboard') && !location.pathname.includes('/job-matches') && !location.pathname.includes('/resumes') && !location.pathname.includes('/feedback') ? "bg-accent" : ""}
                   onClick={() => navigate(isHR ? '/hr-dashboard' : '/candidate-dashboard')}
                 >
                   <Home className="w-5 h-5" />
@@ -70,7 +77,7 @@ const Sidebar = () => {
                     className={location.pathname === '/hr-dashboard/candidates' ? "bg-accent" : ""}
                     onClick={() => navigate('/hr-dashboard/candidates')}
                   >
-                    <Users className="w-5 h-5" />
+                    <Upload className="w-5 h-5" />
                     <span>Candidates</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -127,36 +134,19 @@ const Sidebar = () => {
                     <span>Resume Feedback</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    className={location.pathname === '/candidate-dashboard/upload' ? "bg-accent" : ""}
+                    onClick={() => navigate('/candidate-dashboard/upload')}
+                  >
+                    <Upload className="w-5 h-5" />
+                    <span>Upload Resume</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
         )}
-        
-        <SidebarGroup>
-          <SidebarGroupLabel>Account</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  className={location.pathname === '/profile' ? "bg-accent" : ""}
-                  onClick={() => navigate('/profile')}
-                >
-                  <User className="w-5 h-5" />
-                  <span>Profile</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  className={location.pathname === '/settings' ? "bg-accent" : ""}
-                  onClick={() => navigate('/settings')}
-                >
-                  <Settings className="w-5 h-5" />
-                  <span>Settings</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
       </SidebarContent>
       
       <SidebarFooter>

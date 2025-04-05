@@ -50,7 +50,7 @@ const DashboardHeader = () => {
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="relative h-10 w-10 rounded-full">
               <Avatar>
-                <AvatarFallback className="bg-brand text-white">
+                <AvatarFallback className="bg-blue-600 text-white">
                   {user?.name.substring(0, 2).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
@@ -58,9 +58,6 @@ const DashboardHeader = () => {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Profile</DropdownMenuItem>
-            <DropdownMenuItem>Settings</DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout}>Log out</DropdownMenuItem>
           </DropdownMenuContent>

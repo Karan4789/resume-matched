@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowUpRight, BarChart, FileText, BookOpen, ArrowDown, ArrowUp } from 'lucide-react';
+import { ArrowUpRight, BarChart, FileText, BookOpen, ArrowDown, ArrowUp, Upload } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { Link } from 'react-router-dom';
 import { resumeAnalyses } from '@/services/mockData';
@@ -14,11 +14,19 @@ const CandidateDashboard = () => {
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Candidate Dashboard</h1>
-          <p className="text-muted-foreground mt-2">
-            Monitor your resume performance and get personalized recommendations.
-          </p>
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Candidate Dashboard</h1>
+            <p className="text-muted-foreground mt-2">
+              Monitor your resume performance and get personalized recommendations.
+            </p>
+          </div>
+          <Button asChild className="bg-blue-600 hover:bg-blue-700">
+            <Link to="/candidate-dashboard/upload">
+              <Upload className="mr-2 h-4 w-4" />
+              Upload New Resume
+            </Link>
+          </Button>
         </div>
 
         {/* Stats cards */}
@@ -127,7 +135,7 @@ const CandidateDashboard = () => {
                         <span>Match Score</span>
                         <span>{analysis.matchPercentage}%</span>
                       </div>
-                      <Progress value={analysis.matchPercentage} />
+                      <Progress value={analysis.matchPercentage} className="bg-gray-200 h-2" />
                     </div>
                     
                     <div className="space-y-1">
@@ -178,7 +186,7 @@ const CandidateDashboard = () => {
               <ul className="space-y-3">
                 {analyses.flatMap(a => a.suggestions).slice(0, 5).map((suggestion, idx) => (
                   <li key={idx} className="flex items-start">
-                    <div className="h-6 w-6 rounded-full bg-brand flex items-center justify-center mr-3 flex-shrink-0">
+                    <div className="h-6 w-6 rounded-full bg-blue-600 flex items-center justify-center mr-3 flex-shrink-0">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"

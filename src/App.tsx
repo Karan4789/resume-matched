@@ -16,6 +16,9 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import CandidateDashboard from "./pages/candidate/CandidateDashboard";
 import ResumeUpload from "./pages/candidate/ResumeUpload";
 import ResumeDetail from "./pages/candidate/ResumeDetail";
+import MyResumes from "./pages/candidate/MyResumes";
+import JobMatches from "./pages/candidate/JobMatches";
+import ResumeFeedback from "./pages/candidate/ResumeFeedback";
 
 // HR pages
 import HRDashboard from "./pages/hr/HRDashboard";
@@ -39,11 +42,11 @@ const App = () => (
             {/* Protected candidate routes */}
             <Route element={<ProtectedRoute allowedRoles={['candidate']} />}>
               <Route path="/candidate-dashboard" element={<CandidateDashboard />} />
-              <Route path="/candidate-dashboard/resumes" element={<CandidateDashboard />} />
+              <Route path="/candidate-dashboard/resumes" element={<MyResumes />} />
               <Route path="/candidate-dashboard/upload" element={<ResumeUpload />} />
               <Route path="/candidate-dashboard/resume/:id" element={<ResumeDetail />} />
-              <Route path="/candidate-dashboard/job-matches" element={<CandidateDashboard />} />
-              <Route path="/candidate-dashboard/feedback" element={<CandidateDashboard />} />
+              <Route path="/candidate-dashboard/job-matches" element={<JobMatches />} />
+              <Route path="/candidate-dashboard/feedback" element={<ResumeFeedback />} />
             </Route>
 
             {/* Protected HR routes */}
