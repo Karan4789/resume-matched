@@ -9,9 +9,19 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Upload, FileText, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { jobDescriptions, analyzeResume } from '@/services/mockData';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/components/ui/use-toast';
+
+// Backend URL - adjust as needed
+const API_URL = 'http://localhost:5000';
+
+interface Job {
+  id: string;
+  title: string;
+  company: string;
+  description: string;
+  skills: string[];
+}
 
 const ResumeUpload = () => {
   const [selectedJob, setSelectedJob] = useState('');
@@ -20,9 +30,54 @@ const ResumeUpload = () => {
   const [resumeText, setResumeText] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [activeTab, setActiveTab] = useState('upload');
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [loading, setLoading] = useState(true);
   
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  // Fetch jobs on component mount
+  useState(() => {
+    fetchJobs();
+  });
+
+  const fetchJobs = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_URL}/candidate/jobs`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch jobs');
+      }
+      const jobsData = await response.json();
+      setJobs(jobsData);
+    } catch (error) {
+      console.error('Error fetching jobs:', error);
+      toast({
+        title: "Failed to load jobs",
+        description: "Could not load job listings. Please try again.",
+        variant: "destructive",
+      });
+      // Fallback to some default jobs if API fails
+      setJobs([
+        {
+          id: "1",
+          title: "Frontend Developer",
+          company: "Tech Solutions Inc.",
+          description: "We're looking for a skilled Frontend Developer with experience in React, TypeScript and modern web development practices.",
+          skills: ["React", "TypeScript", "HTML", "CSS", "JavaScript"]
+        },
+        {
+          id: "2",
+          title: "Full Stack Engineer",
+          company: "WebTech Systems",
+          description: "Full Stack Engineer position requiring expertise in both frontend and backend technologies.",
+          skills: ["React", "Node.js", "MongoDB", "Express", "JavaScript"]
+        }
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -30,14 +85,12 @@ const ResumeUpload = () => {
       setFile(selectedFile);
       setUploading(true);
       
-      // Simulate file upload delay
-      setTimeout(() => {
-        setUploading(false);
-        toast({
-          title: "Upload successful",
-          description: `${selectedFile.name} has been uploaded.`,
-        });
-      }, 1500);
+      // Just set the file without mock delay
+      setUploading(false);
+      toast({
+        title: "Upload successful",
+        description: `${selectedFile.name} has been selected.`,
+      });
     }
   };
 
@@ -74,14 +127,27 @@ const ResumeUpload = () => {
     setAnalyzing(true);
     
     try {
-      // In a real app, we would send the file to the backend
-      // For now, we'll use the pasted text or a placeholder
-      const textToAnalyze = activeTab === 'paste' 
-        ? resumeText 
-        : "Frontend developer with 2 years of experience in React.js, JavaScript, HTML, CSS, and Git. Worked on responsive web design projects and implemented user interfaces. Experience with component libraries and cross-browser compatibility. Strong problem-solving skills and team collaboration.";
+      // Create form data for the API
+      const formData = new FormData();
+      formData.append('job_id', selectedJob);
       
-      // Simulate API call delay
-      await analyzeResume(textToAnalyze, selectedJob);
+      if (activeTab === 'upload' && file) {
+        formData.append('file', file);
+      } else if (activeTab === 'paste') {
+        formData.append('text', resumeText);
+      }
+      
+      // Send to backend
+      const response = await fetch(`${API_URL}/candidate/upload`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to analyze resume');
+      }
+
+      const result = await response.json();
       
       // Navigate to results page after successful analysis
       navigate('/candidate-dashboard/resumes');
@@ -91,6 +157,7 @@ const ResumeUpload = () => {
         description: "Your resume has been analyzed successfully!",
       });
     } catch (error) {
+      console.error('Error analyzing resume:', error);
       toast({
         title: "Analysis failed",
         description: "There was an error analyzing your resume. Please try again.",
@@ -127,28 +194,31 @@ const ResumeUpload = () => {
                     <SelectValue placeholder="Select a job position" />
                   </SelectTrigger>
                   <SelectContent>
-                    {jobDescriptions.map((job) => (
-                      <SelectItem key={job.id} value={job.id}>
-                        {job.title} - {job.company}
-                      </SelectItem>
-                    ))}
+                    {loading ? (
+                      <SelectItem value="loading" disabled>Loading jobs...</SelectItem>
+                    ) : (
+                      jobs.map((job) => (
+                        <SelectItem key={job.id} value={job.id}>
+                          {job.title} - {job.company}
+                        </SelectItem>
+                      ))
+                    )}
                   </SelectContent>
                 </Select>
               </div>
               
-              {selectedJob && (
+              {selectedJob && jobs.length > 0 && (
                 <div className="bg-muted p-4 rounded-lg">
                   <h3 className="font-medium mb-2">Job Description</h3>
                   <p className="text-sm mb-3">
-                    {jobDescriptions.find(j => j.id === selectedJob)?.description}
+                    {jobs.find(j => j.id === selectedJob)?.description}
                   </p>
                   <div>
                     <h4 className="text-sm font-medium mb-1">Required Skills:</h4>
                     <div className="flex flex-wrap gap-1">
-                      {jobDescriptions
+                      {jobs
                         .find(j => j.id === selectedJob)
-                        ?.skills.slice(0, 6)
-                        .map((skill, idx) => (
+                        ?.skills.map((skill, idx) => (
                           <span key={idx} className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-semibold">
                             {skill}
                           </span>

@@ -1,15 +1,10 @@
 
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import jwt_required, get_jwt_identity
-from utils.helpers import role_required
 from models import get_candidate_analyses, get_analysis, save_job, get_all_jobs, get_job
-import json
 
 hr_bp = Blueprint('hr', __name__)
 
 @hr_bp.route('/candidates', methods=['GET'])
-@jwt_required()
-@role_required('hr')
 def get_candidates():
     # Get query parameters for filtering
     job_id = request.args.get('job_id')
@@ -44,8 +39,6 @@ def get_candidates():
     return jsonify(analyses), 200
 
 @hr_bp.route('/candidate/<analysis_id>', methods=['GET'])
-@jwt_required()
-@role_required('hr')
 def get_candidate_analysis(analysis_id):
     analysis = get_analysis(analysis_id)
     
@@ -55,8 +48,6 @@ def get_candidate_analysis(analysis_id):
     return jsonify(analysis), 200
 
 @hr_bp.route('/job', methods=['POST'])
-@jwt_required()
-@role_required('hr')
 def create_job():
     data = request.get_json()
     
@@ -74,16 +65,12 @@ def create_job():
     }), 201
 
 @hr_bp.route('/jobs', methods=['GET'])
-@jwt_required()
-@role_required('hr')
 def get_jobs():
     jobs = get_all_jobs()
     
     return jsonify(jobs), 200
 
 @hr_bp.route('/job/<job_id>', methods=['GET'])
-@jwt_required()
-@role_required('hr')
 def get_job_by_id(job_id):
     job = get_job(job_id)
     

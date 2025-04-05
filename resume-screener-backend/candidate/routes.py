@@ -1,10 +1,8 @@
 
 from flask import Blueprint, request, jsonify, current_app
-from flask_jwt_extended import jwt_required, get_jwt_identity
 from werkzeug.utils import secure_filename
 from utils.text_parser import extract_text_from_pdf, extract_text_from_docx, extract_text_from_txt
 from utils.nlp_analyzer import analyze_resume
-from utils.helpers import role_required
 from models import save_resume, get_user_resumes, save_analysis, get_user_analyses, get_job, get_all_jobs, get_analysis, delete_resume, delete_analysis
 import os
 import uuid
@@ -16,11 +14,9 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in current_app.config['ALLOWED_EXTENSIONS']
 
 @candidate_bp.route('/upload', methods=['POST'])
-@jwt_required()
-@role_required('candidate')
 def upload_resume():
-    current_user = get_jwt_identity()
-    user_id = current_user['user_id']
+    # Hardcoded user_id since we removed authentication
+    user_id = "default_user_id"
     
     # Check if job_id is provided
     if 'job_id' not in request.form:
@@ -113,58 +109,42 @@ def upload_resume():
     }), 201
 
 @candidate_bp.route('/resumes', methods=['GET'])
-@jwt_required()
-@role_required('candidate')
 def get_resumes():
-    current_user = get_jwt_identity()
-    user_id = current_user['user_id']
+    # Hardcoded user_id since we removed authentication
+    user_id = "default_user_id"
     
     resumes = get_user_resumes(user_id)
     
     return jsonify(resumes), 200
 
 @candidate_bp.route('/analyses', methods=['GET'])
-@jwt_required()
-@role_required('candidate')
 def get_analyses():
-    current_user = get_jwt_identity()
-    user_id = current_user['user_id']
+    # Hardcoded user_id since we removed authentication
+    user_id = "default_user_id"
     
     analyses = get_user_analyses(user_id)
     
     return jsonify(analyses), 200
 
 @candidate_bp.route('/jobs', methods=['GET'])
-@jwt_required()
 def get_jobs():
     jobs = get_all_jobs()
     
     return jsonify(jobs), 200
 
 @candidate_bp.route('/analysis/<analysis_id>', methods=['GET'])
-@jwt_required()
-@role_required('candidate')
 def get_analysis_details(analysis_id):
-    current_user = get_jwt_identity()
-    user_id = current_user['user_id']
-    
     analysis = get_analysis(analysis_id)
     
     if not analysis:
         return jsonify({'error': 'Analysis not found'}), 404
     
-    # Check if analysis belongs to user
-    if analysis['user_id'] != user_id:
-        return jsonify({'error': 'Unauthorized'}), 403
-    
     return jsonify(analysis), 200
 
 @candidate_bp.route('/resume/<resume_id>', methods=['DELETE'])
-@jwt_required()
-@role_required('candidate')
 def delete_resume_endpoint(resume_id):
-    current_user = get_jwt_identity()
-    user_id = current_user['user_id']
+    # Hardcoded user_id since we removed authentication
+    user_id = "default_user_id"
     
     # Get resume from database
     resume = get_user_resumes(user_id)

@@ -3,14 +3,11 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 
 import Index from "./pages/Index";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
-import ProtectedRoute from "./components/ProtectedRoute";
 
 // Candidate pages
 import CandidateDashboard from "./pages/candidate/CandidateDashboard";
@@ -36,28 +33,26 @@ const App = () => (
           <Routes>
             {/* Public routes */}
             <Route path="/" element={<Index />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+            
+            {/* Redirect login to home since we removed authentication */}
+            <Route path="/login" element={<Navigate to="/" replace />} />
+            <Route path="/register" element={<Navigate to="/" replace />} />
 
-            {/* Protected candidate routes */}
-            <Route element={<ProtectedRoute allowedRoles={['candidate']} />}>
-              <Route path="/candidate-dashboard" element={<CandidateDashboard />} />
-              <Route path="/candidate-dashboard/resumes" element={<MyResumes />} />
-              <Route path="/candidate-dashboard/upload" element={<ResumeUpload />} />
-              <Route path="/candidate-dashboard/resume/:id" element={<ResumeDetail />} />
-              <Route path="/candidate-dashboard/job-matches" element={<JobMatches />} />
-              <Route path="/candidate-dashboard/feedback" element={<ResumeFeedback />} />
-            </Route>
+            {/* Candidate routes - no longer protected */}
+            <Route path="/candidate-dashboard" element={<CandidateDashboard />} />
+            <Route path="/candidate-dashboard/resumes" element={<MyResumes />} />
+            <Route path="/candidate-dashboard/upload" element={<ResumeUpload />} />
+            <Route path="/candidate-dashboard/resume/:id" element={<ResumeDetail />} />
+            <Route path="/candidate-dashboard/job-matches" element={<JobMatches />} />
+            <Route path="/candidate-dashboard/feedback" element={<ResumeFeedback />} />
 
-            {/* Protected HR routes */}
-            <Route element={<ProtectedRoute allowedRoles={['hr']} />}>
-              <Route path="/hr-dashboard" element={<HRDashboard />} />
-              <Route path="/hr-dashboard/candidates" element={<HRDashboard />} />
-              <Route path="/hr-dashboard/candidate/:id" element={<CandidateDetail />} />
-              <Route path="/hr-dashboard/job-postings" element={<HRDashboard />} />
-              <Route path="/hr-dashboard/job-posting/:id" element={<HRDashboard />} />
-              <Route path="/hr-dashboard/analytics" element={<HRDashboard />} />
-            </Route>
+            {/* HR routes - no longer protected */}
+            <Route path="/hr-dashboard" element={<HRDashboard />} />
+            <Route path="/hr-dashboard/candidates" element={<HRDashboard />} />
+            <Route path="/hr-dashboard/candidate/:id" element={<CandidateDetail />} />
+            <Route path="/hr-dashboard/job-postings" element={<HRDashboard />} />
+            <Route path="/hr-dashboard/job-posting/:id" element={<HRDashboard />} />
+            <Route path="/hr-dashboard/analytics" element={<HRDashboard />} />
 
             {/* Catch-all route */}
             <Route path="*" element={<NotFound />} />
