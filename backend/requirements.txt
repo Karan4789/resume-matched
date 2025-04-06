@@ -1,0 +1,9 @@
+gunicorn==21.2.0
+flask
+flask-cors
+python-dotenv
+google-generativeai
+pymongo
+scikit-learn
+PyPDF2
+sqlalchemy
