@@ -74,3 +74,37 @@ export const getDashboardStats = async (): Promise<DashboardStats> => {
     throw error;
   }
 };
+
+export const createJobPosting = async (data: any) => {
+  const response = await fetch("/api/job-postings", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to create job posting");
+  }
+
+  return response.json();
+};
+
+export const getJobPostings = async () => {
+  const response = await fetch("/api/job-postings");
+  if (!response.ok) {
+    throw new Error("Failed to fetch job postings");
+  }
+  return response.json();
+};
+
+export const getHRDashboardOverview = async () => {
+  const response = await axios.get(`${API_URL}/dashboard/overview`);
+  return response.data;
+};
+
+export const deleteResume = async (id: number) => {
+  const response = await axios.delete(`${API_URL}/resume/${id}`);
+  return response.data;
+};

@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { getDashboardStats } from "@/services/api";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getDashboardStats, deleteResume } from "@/services/api";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
 import {
   Card,
@@ -19,6 +19,14 @@ const MyResumes = () => {
   const { data: dashboardData, isLoading } = useQuery({
     queryKey: ["dashboardStats"],
     queryFn: getDashboardStats,
+  });
+
+  const queryClient = useQueryClient();
+  const deleteMutation = useMutation({
+    mutationFn: deleteResume,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["resumes"] });
+    },
   });
 
   // Convert recent submissions to analyses format with consistent IDs
@@ -68,8 +76,14 @@ const MyResumes = () => {
       };
     }) ?? [];
 
-  const handleDelete = (id: string) => {
-    // Implement delete functionality if needed
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteMutation.mutateAsync(id);
+      // Show success toast or message
+    } catch (error) {
+      // Show error toast or message
+      console.error("Failed to delete resume:", error);
+    }
   };
 
   return (
@@ -158,9 +172,9 @@ const MyResumes = () => {
               </CardContent>
               <CardFooter className="flex justify-between">
                 <Button
-                  variant="ghost"
-                  size="sm"
+                  variant="destructive"
                   onClick={() => handleDelete(analysis.id)}
+                  disabled={deleteMutation.isPending}
                   className="text-red-600 hover:text-red-700 hover:bg-red-50"
                 >
                   <Trash2 className="mr-1 h-4 w-4" />

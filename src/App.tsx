@@ -25,6 +25,7 @@ import ResumeAnalysisDetail from "./pages/candidate/ResumeAnalysisDetail";
 // HR pages
 import HRDashboard from "./pages/hr/HRDashboard";
 import CandidateDetail from "./pages/hr/CandidateDetail";
+import CreateJobPosting from "./pages/hr/CreateJobPosting";
 
 const queryClient = new QueryClient();
 
@@ -97,6 +98,10 @@ const App = () => (
                 <Route
                   path="/hr-dashboard/analytics"
                   element={<HRDashboard />}
+                />
+                <Route
+                  path="/hr-dashboard/job-postings/new"
+                  element={<CreateJobPosting />}
                 />
               </Route>
 
