@@ -21,8 +21,8 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app, resources={
     r"/api/*": {
-        "origins": ["http://localhost:8081"],
-        "methods": ["GET", "POST", "DELETE", "OPTIONS"],
+        "origins": ["http://localhost:8080"],
+        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         "allow_headers": ["Content-Type", "Authorization"]
     }
 })
@@ -147,7 +147,6 @@ Respond strictly in this JSON format:
             'details': str(e)
         }), 500
 
-# Replace the dashboard stats endpoint with a simpler version
 @app.route('/api/dashboard/stats', methods=['GET'])
 def get_dashboard_stats():
     try:
@@ -157,39 +156,32 @@ def get_dashboard_stats():
         # Get aggregate stats
         stats = ResumeAnalysis.get_stats()
         
-        if not stats:
-            return jsonify({
-                'recent_submissions': recent_submissions,
-                'stats': {
-                    'avg_match_score': 0,
-                    'avg_ats_score': 0,
-                    'total_submissions': 0,
-                    'common_missing_skills': []
-                }
-            })
-
         # Process missing skills
-        all_missing_skills = stats[0]['missing_skills']
-        flat_missing_skills = [skill for sublist in all_missing_skills for skill in sublist]
+        missing_skills = stats['missing_skills']
         skill_counts = {}
-        for skill in flat_missing_skills:
-            skill_counts[skill] = skill_counts.get(skill, 0) + 1
+        for skill in missing_skills:
+            if isinstance(skill, str):  # Make sure skill is a string
+                skill_counts[skill] = skill_counts.get(skill, 0) + 1
         
-        common_missing_skills = sorted(skill_counts.items(), key=lambda x: x[1], reverse=True)[:5]
+        common_missing_skills = [
+            {'skill': skill, 'count': count}
+            for skill, count in sorted(skill_counts.items(), key=lambda x: x[1], reverse=True)[:5]
+        ]
 
         return jsonify({
             'recent_submissions': recent_submissions,
             'stats': {
-                'avg_match_score': round(stats[0]['avg_match_score'], 2),
-                'avg_ats_score': round(stats[0]['avg_ats_score'], 2),
-                'total_submissions': stats[0]['total_submissions'],
-                'common_missing_skills': [{'skill': k, 'count': v} for k, v in common_missing_skills]
+                'avg_match_score': stats['avg_match_score'],
+                'avg_ats_score': stats['avg_ats_score'],
+                'total_submissions': stats['total_submissions'],
+                'common_missing_skills': common_missing_skills
             }
         })
-
     except Exception as e:
         logger.error(f"Dashboard stats error: {str(e)}", exc_info=True)
-        return jsonify({'error': 'Failed to fetch dashboard stats'}), 500
+        return jsonify({
+            'error': str(e)
+        }), 500
 
 @app.route('/api/dashboard/overview', methods=['GET'])
 def get_dashboard_overview():

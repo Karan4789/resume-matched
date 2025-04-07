@@ -1,6 +1,12 @@
 import { useLocation, Navigate, Link } from "react-router-dom";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
@@ -39,14 +45,16 @@ const ResumeAnalysisDetail = () => {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <Link 
+            <Link
               to="/candidate-dashboard"
               className="text-muted-foreground hover:text-foreground flex items-center mb-2"
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Dashboard
             </Link>
-            <h1 className="text-3xl font-bold tracking-tight">Resume Analysis</h1>
+            <h1 className="text-3xl font-bold tracking-tight">
+              Resume Analysis
+            </h1>
             <p className="text-muted-foreground">
               Analysis for {analysis.jobTitle}
             </p>
@@ -61,7 +69,9 @@ const ResumeAnalysisDetail = () => {
               <CardDescription>Overall job compatibility</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold mb-2">{analysis.match_score}%</div>
+              <div className="text-2xl font-bold mb-2">
+                {analysis.match_score}%
+              </div>
               <Progress value={analysis.match_score} className="h-2" />
             </CardContent>
           </Card>
@@ -72,7 +82,9 @@ const ResumeAnalysisDetail = () => {
               <CardDescription>Resume readability score</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold mb-2">{analysis.ats_score}%</div>
+              <div className="text-2xl font-bold mb-2">
+                {analysis.ats_score}%
+              </div>
               <Progress value={analysis.ats_score} className="h-2" />
             </CardContent>
           </Card>
@@ -130,28 +142,52 @@ const ResumeAnalysisDetail = () => {
               <AlertCircle className="h-5 w-5 text-blue-600 mr-2" />
               AI Recommendations
             </CardTitle>
-            <CardDescription>Personalized suggestions to improve your resume</CardDescription>
+            <CardDescription>
+              Personalized suggestions to improve your resume
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               <div className="text-sm text-muted-foreground">
-                <h3 className="text-base font-medium text-foreground mb-2">Key Areas for Improvement</h3>
+                <h3 className="text-base font-medium text-foreground mb-2">
+                  Key Areas for Improvement
+                </h3>
                 <div className="space-y-2">
-                  <p className="text-blue-800 whitespace-pre-line">{analysis.feedback}</p>
+                  <p className="text-blue-800 whitespace-pre-line">
+                    {analysis.feedback}
+                  </p>
                 </div>
               </div>
               <div className="text-sm text-muted-foreground">
-                <h3 className="text-base font-medium text-foreground mb-2">Skills Gap Analysis</h3>
+                <h3 className="text-base font-medium text-foreground mb-2">
+                  Skills Gap Analysis
+                </h3>
                 <div className="space-y-2">
-                  <p>• Found {analysis.matched_skills?.length || 0} matching skills out of {(analysis.matched_skills?.length || 0) + (analysis.missing_skills?.length || 0)} required skills</p>
-                  <p>• Focus on acquiring these missing skills: {analysis.missing_skills?.join(", ")}</p>
+                  <p>
+                    • Found {analysis.matched_skills?.length || 0} matching
+                    skills out of{" "}
+                    {(analysis.matched_skills?.length || 0) +
+                      (analysis.missing_skills?.length || 0)}{" "}
+                    required skills
+                  </p>
+                  <p>
+                    • Focus on acquiring these missing skills:{" "}
+                    {analysis.missing_skills?.join(", ")}
+                  </p>
                 </div>
               </div>
               <div className="text-sm text-muted-foreground">
-                <h3 className="text-base font-medium text-foreground mb-2">ATS Optimization</h3>
+                <h3 className="text-base font-medium text-foreground mb-2">
+                  ATS Optimization
+                </h3>
                 <div className="space-y-2">
                   <p>• Current ATS Score: {analysis.ats_score}%</p>
-                  <p>• {analysis.ats_score >= 70 ? "Your resume is well-optimized for ATS systems" : "Consider improving your resume format for better ATS compatibility"}</p>
+                  <p>
+                    •{" "}
+                    {analysis.ats_score >= 70
+                      ? "Your resume is well-optimized for ATS systems"
+                      : "Consider improving your resume format for better ATS compatibility"}
+                  </p>
                 </div>
               </div>
             </div>

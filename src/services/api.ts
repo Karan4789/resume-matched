@@ -57,7 +57,15 @@ export interface Submission {
 }
 
 export interface DashboardStats {
-  recent_submissions: Submission[];
+  recent_submissions: {
+    id: number; // Make sure this is explicitly typed as number
+    job_description: string;
+    analysis_result: AnalysisResult;
+    created_at: string;
+    candidate_name: string;
+    candidate_email: string;
+    role: string;
+  }[];
   stats: {
     avg_match_score: number;
     avg_ats_score: number;
@@ -120,7 +128,13 @@ export const getHRDashboardOverview = async () => {
   return response.data;
 };
 
-export const deleteResume = async (id: number) => {
-  const response = await axios.delete(`${API_URL}/resume/${id}`);
-  return response.data;
+export const deleteResume = async (id: string) => {
+  // Change type to number
+  try {
+    const response = await api.delete(`/resume/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting resume:", error);
+    throw error;
+  }
 };

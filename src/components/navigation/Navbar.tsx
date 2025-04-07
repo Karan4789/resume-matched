@@ -34,7 +34,7 @@ const Navbar = () => {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link to="/" className="flex-shrink-0 flex items-center">
-              <span className="text-2xl font-semibold text-brand">ResumeMatch AI</span>
+              <span className="text-2xl font-semibold text-brand">SkillSync</span>
             </Link>
           </div>
 

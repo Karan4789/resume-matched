@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { FileText, ArrowUpRight, Trash2, Upload } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useToast } from "@/components/ui/use-toast";
 
 const MyResumes = () => {
   const { data: dashboardData, isLoading } = useQuery({
@@ -21,67 +22,74 @@ const MyResumes = () => {
     queryFn: getDashboardStats,
   });
 
+  const { toast } = useToast();
   const queryClient = useQueryClient();
   const deleteMutation = useMutation({
     mutationFn: deleteResume,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["resumes"] });
+      toast({
+        title: "Success",
+        description: "Resume deleted successfully",
+      });
+      // Refetch dashboard stats after deletion
+      queryClient.invalidateQueries({ queryKey: ["dashboardStats"] });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to delete resume",
+        variant: "destructive",
+      });
+      console.error("Delete error:", error);
     },
   });
 
-  // Convert recent submissions to analyses format with consistent IDs
+  // Convert recent submissions to analyses format
   const analyses =
-    dashboardData?.recent_submissions.map((submission) => {
-      // Generate consistent ID using base64 of job description and date
-      const id = btoa(
-        `${submission.job_description}-${submission.created_at}`
-      ).slice(0, 12);
-
-      return {
-        id,
+    dashboardData?.recent_submissions.map((submission) => ({
+      id: submission.id, // Use the actual database ID instead of generating one
+      jobTitle: submission.job_description.split("\n")[0],
+      matchPercentage: submission.analysis_result.match_score,
+      atsScore: submission.analysis_result.ats_score,
+      matchedSkills: submission.analysis_result.matched_skills,
+      missingSkills: submission.analysis_result.missing_skills,
+      analysisDate: submission.created_at,
+      // Include full analysis for state transfer
+      fullAnalysis: {
         jobTitle: submission.job_description.split("\n")[0],
         matchPercentage: submission.analysis_result.match_score,
         atsScore: submission.analysis_result.ats_score,
         matchedSkills: submission.analysis_result.matched_skills,
         missingSkills: submission.analysis_result.missing_skills,
-        analysisDate: submission.created_at,
-        // Include full analysis for state transfer
-        fullAnalysis: {
-          jobTitle: submission.job_description.split("\n")[0],
-          matchPercentage: submission.analysis_result.match_score,
-          atsScore: submission.analysis_result.ats_score,
-          matchedSkills: submission.analysis_result.matched_skills,
-          missingSkills: submission.analysis_result.missing_skills,
-          requiredSkills: submission.analysis_result.required_skills,
-          suggestions: [submission.analysis_result.feedback],
-          sections: {
-            experience: Math.round(submission.analysis_result.match_score),
-            education: Math.round(submission.analysis_result.ats_score),
-            skills: Math.round(
-              (submission.analysis_result.matched_skills.length /
-                (submission.analysis_result.matched_skills.length +
-                  submission.analysis_result.missing_skills.length)) *
-                100
-            ),
-            formatting: submission.analysis_result.ats_score,
-          },
-          keywordDensity: submission.analysis_result.extracted_skills.reduce(
-            (acc: any, skill: string) => {
-              acc[skill] = (acc[skill] || 0) + 1;
-              return acc;
-            },
-            {}
+        requiredSkills: submission.analysis_result.required_skills,
+        suggestions: [submission.analysis_result.feedback],
+        sections: {
+          experience: Math.round(submission.analysis_result.match_score),
+          education: Math.round(submission.analysis_result.ats_score),
+          skills: Math.round(
+            (submission.analysis_result.matched_skills.length /
+              (submission.analysis_result.matched_skills.length +
+                submission.analysis_result.missing_skills.length)) *
+              100
           ),
+          formatting: submission.analysis_result.ats_score,
         },
-      };
-    }) ?? [];
+        keywordDensity: submission.analysis_result.extracted_skills.reduce(
+          (acc: any, skill: string) => {
+            acc[skill] = (acc[skill] || 0) + 1;
+            return acc;
+          },
+          {}
+        ),
+      },
+    })) ?? [];
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: number) => {
+    // Change type to number
     try {
       await deleteMutation.mutateAsync(id);
-      // Show success toast or message
     } catch (error) {
-      // Show error toast or message
+      // Error is handled by the mutation's onError callback
       console.error("Failed to delete resume:", error);
     }
   };
@@ -178,20 +186,22 @@ const MyResumes = () => {
                   className="text-red-600 hover:text-red-700 hover:bg-red-50"
                 >
                   <Trash2 className="mr-1 h-4 w-4" />
-                  Delete
+                  {deleteMutation.isPending ? "Deleting..." : "Delete"}
                 </Button>
                 <Button variant="outline" size="sm" asChild>
                   <Link
                     to={`/candidate-dashboard/resume/${analysis.id}`}
-                    state={{ analysis: {
-                      jobTitle: analysis.jobTitle,
-                      matchPercentage: analysis.matchPercentage,
-                      atsScore: analysis.atsScore,
-                      matchedSkills: analysis.matchedSkills,
-                      missingSkills: analysis.missingSkills,
-                      feedback: analysis.feedback,
-                      analysisDate: analysis.analysisDate
-                    }}}
+                    state={{
+                      analysis: {
+                        jobTitle: analysis.jobTitle,
+                        matchPercentage: analysis.matchPercentage,
+                        atsScore: analysis.atsScore,
+                        matchedSkills: analysis.matchedSkills,
+                        missingSkills: analysis.missingSkills,
+                        feedback: analysis.feedback,
+                        analysisDate: analysis.analysisDate,
+                      },
+                    }}
                   >
                     <span className="flex items-center">
                       View Detailed Analysis

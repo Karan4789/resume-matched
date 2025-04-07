@@ -48,13 +48,19 @@ const ResumeDetail = () => {
       <div className="space-y-6">
         <div className="flex justify-between items-start">
           <div>
-            <Link to="/candidate-dashboard" className="text-muted-foreground hover:text-foreground flex items-center mb-2">
+            <Link
+              to="/candidate-dashboard"
+              className="text-muted-foreground hover:text-foreground flex items-center mb-2"
+            >
               <ArrowLeft className="mr-1 h-4 w-4" />
               Back to Dashboard
             </Link>
-            <h1 className="text-3xl font-bold tracking-tight">{analysis.jobTitle}</h1>
+            <h1 className="text-3xl font-bold tracking-tight">
+              {analysis.jobTitle}
+            </h1>
             <p className="text-muted-foreground">
-              Analysis from {new Date(analysis.analysisDate).toLocaleDateString()}
+              Analysis from{" "}
+              {new Date(analysis.analysisDate).toLocaleDateString()}
             </p>
           </div>
         </div>
@@ -66,10 +72,14 @@ const ResumeDetail = () => {
             <Card>
               <CardHeader>
                 <CardTitle>Match Score</CardTitle>
-                <CardDescription>Overall compatibility with the job</CardDescription>
+                <CardDescription>
+                  Overall compatibility with the job
+                </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold text-center">{analysis.match_score}%</div>
+                <div className="text-3xl font-bold text-center">
+                  {analysis.match_score}%
+                </div>
                 <Progress value={analysis.match_score} className="mt-2" />
               </CardContent>
             </Card>
@@ -81,7 +91,9 @@ const ResumeDetail = () => {
                 <CardDescription>Resume parsing compatibility</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold text-center">{analysis.ats_score}%</div>
+                <div className="text-3xl font-bold text-center">
+                  {analysis.ats_score}%
+                </div>
                 <Progress value={analysis.ats_score} className="mt-2" />
               </CardContent>
             </Card>
@@ -96,11 +108,15 @@ const ResumeDetail = () => {
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <span>Matched:</span>
-                    <span className="font-medium">{analysis.matched_skills.length}</span>
+                    <span className="font-medium">
+                      {analysis.matched_skills.length}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span>Missing:</span>
-                    <span className="font-medium">{analysis.missing_skills.length}</span>
+                    <span className="font-medium">
+                      {analysis.missing_skills.length}
+                    </span>
                   </div>
                 </div>
               </CardContent>
@@ -119,7 +135,10 @@ const ResumeDetail = () => {
               <CardContent>
                 <div className="flex flex-wrap gap-2">
                   {analysis.matched_skills.map((skill, idx) => (
-                    <span key={idx} className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm">
+                    <span
+                      key={idx}
+                      className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm"
+                    >
                       {skill}
                     </span>
                   ))}
@@ -137,7 +156,10 @@ const ResumeDetail = () => {
               <CardContent>
                 <div className="flex flex-wrap gap-2">
                   {analysis.missing_skills.map((skill, idx) => (
-                    <span key={idx} className="bg-red-100 text-red-800 px-2 py-1 rounded-full text-sm">
+                    <span
+                      key={idx}
+                      className="bg-red-100 text-red-800 px-2 py-1 rounded-full text-sm"
+                    >
                       {skill}
                     </span>
                   ))}

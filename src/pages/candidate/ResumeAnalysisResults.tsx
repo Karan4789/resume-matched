@@ -1,9 +1,21 @@
 import { useLocation, Navigate, Link } from "react-router-dom";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, XCircle, AlertCircle, Share2, Download } from "lucide-react";
+import {
+  CheckCircle,
+  XCircle,
+  AlertCircle,
+  Share2,
+  Download,
+} from "lucide-react";
 
 const ResumeAnalysisResults = () => {
   const location = useLocation();
@@ -42,7 +54,9 @@ const ResumeAnalysisResults = () => {
             <Card>
               <CardHeader>
                 <CardTitle>Match Score</CardTitle>
-                <CardDescription>Overall compatibility with the job requirements</CardDescription>
+                <CardDescription>
+                  Overall compatibility with the job requirements
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center justify-center">
@@ -61,7 +75,9 @@ const ResumeAnalysisResults = () => {
                         className="text-blue-600 transition-all"
                         strokeWidth="10"
                         strokeDasharray={`${2 * Math.PI * 40}`}
-                        strokeDashoffset={`${2 * Math.PI * 40 * (1 - analysis.match_score / 100)}`}
+                        strokeDashoffset={`${
+                          2 * Math.PI * 40 * (1 - analysis.match_score / 100)
+                        }`}
                         stroke="currentColor"
                         fill="transparent"
                         r="40"
@@ -70,7 +86,9 @@ const ResumeAnalysisResults = () => {
                       />
                     </svg>
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-2xl font-bold">{analysis.match_score}%</span>
+                      <span className="text-2xl font-bold">
+                        {analysis.match_score}%
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -80,14 +98,19 @@ const ResumeAnalysisResults = () => {
             <Card>
               <CardHeader>
                 <CardTitle>ATS Score</CardTitle>
-                <CardDescription>Resume readability by ATS systems</CardDescription>
+                <CardDescription>
+                  Resume readability by ATS systems
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="text-2xl font-bold text-center">{analysis.ats_score}%</div>
+                  <div className="text-2xl font-bold text-center">
+                    {analysis.ats_score}%
+                  </div>
                   <Progress value={analysis.ats_score} className="h-2" />
                   <p className="text-sm text-muted-foreground">
-                    Higher scores indicate better chances of passing ATS screening
+                    Higher scores indicate better chances of passing ATS
+                    screening
                   </p>
                 </div>
               </CardContent>
@@ -157,18 +180,31 @@ const ResumeAnalysisResults = () => {
           <Card>
             <CardHeader>
               <CardTitle>Detailed Analysis</CardTitle>
-              <CardDescription>Comprehensive review of your resume</CardDescription>
+              <CardDescription>
+                Comprehensive review of your resume
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div>
                 <h3 className="font-medium mb-2">Key Findings</h3>
                 <div className="text-sm text-muted-foreground space-y-2">
-                  <p>• Overall Match Score: {analysis.match_score}% match with job requirements</p>
-                  <p>• ATS Compatibility: {analysis.ats_score}% - {analysis.ats_score >= 70 ? 'Good' : 'Needs Improvement'}</p>
-                  <p>• Matched Skills: {analysis.matched_skills.length} of {analysis.matched_skills.length + analysis.missing_skills.length} required skills</p>
+                  <p>
+                    • Overall Match Score: {analysis.match_score}% match with
+                    job requirements
+                  </p>
+                  <p>
+                    • ATS Compatibility: {analysis.ats_score}% -{" "}
+                    {analysis.ats_score >= 70 ? "Good" : "Needs Improvement"}
+                  </p>
+                  <p>
+                    • Matched Skills: {analysis.matched_skills.length} of{" "}
+                    {analysis.matched_skills.length +
+                      analysis.missing_skills.length}{" "}
+                    required skills
+                  </p>
                 </div>
               </div>
-              
+
               <div>
                 <h3 className="font-medium mb-2">Recommendations</h3>
                 <div className="text-sm text-muted-foreground space-y-2 whitespace-pre-line">

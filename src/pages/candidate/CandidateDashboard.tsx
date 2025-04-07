@@ -227,9 +227,9 @@ const CandidateDashboard = () => {
 
                 <CardFooter>
                   <Button variant="ghost" className="w-full" asChild>
-                    <Link 
+                    <Link
                       to={`/candidate-dashboard/resume/${analysis.id}`}
-                      state={{ 
+                      state={{
                         analysis: {
                           jobTitle: analysis.jobTitle,
                           match_score: analysis.matchPercentage,
@@ -237,8 +237,8 @@ const CandidateDashboard = () => {
                           matched_skills: analysis.matchedSkills,
                           missing_skills: analysis.missingSkills,
                           feedback: analysis.feedback,
-                          analysisDate: analysis.analysisDate
-                        }
+                          analysisDate: analysis.analysisDate,
+                        },
                       }}
                     >
                       <span className="flex items-center">

@@ -38,55 +38,70 @@ class ResumeAnalysis(Base):
     @staticmethod
     def get_recent_submissions(limit=10):
         session = Session()
-        submissions = session.query(ResumeAnalysis).order_by(
-            ResumeAnalysis.created_at.desc()
-        ).limit(limit).all()
-        session.close()
-        return [
-            {
+        try:
+            submissions = session.query(ResumeAnalysis).order_by(
+                ResumeAnalysis.created_at.desc()
+            ).limit(limit).all()
+            
+            return [{
+                'id': sub.id,
                 'job_description': sub.job_description,
                 'analysis_result': sub.analysis_result,
-                'created_at': sub.created_at
-            } for sub in submissions
-        ]
+                'created_at': sub.created_at.isoformat() if sub.created_at else None,
+                'candidate_name': sub.candidate_name,
+                'candidate_email': sub.candidate_email,
+                'role': sub.role
+            } for sub in submissions]
+        except Exception as e:
+            print(f"Error getting recent submissions: {str(e)}")
+            return []
+        finally:
+            session.close()
 
     @staticmethod
     def get_stats():
         try:
             session = Session()
             submissions = session.query(ResumeAnalysis).all()
-            session.close()
-
+            
             if not submissions:
-                return [{
-                    '_id': None,
+                return {
                     'avg_match_score': 0,
                     'avg_ats_score': 0,
                     'total_submissions': 0,
                     'missing_skills': []
-                }]
+                }
 
             total = len(submissions)
-            avg_match = sum(s.analysis_result.get('match_score', 0) for s in submissions) / total
-            avg_ats = sum(s.analysis_result.get('ats_score', 0) for s in submissions) / total
-            missing_skills = [s.analysis_result.get('missing_skills', []) for s in submissions]
+            match_scores = []
+            ats_scores = []
+            missing_skills = []
 
-            return [{
-                '_id': None,
+            for sub in submissions:
+                if isinstance(sub.analysis_result, dict):
+                    match_scores.append(sub.analysis_result.get('match_score', 0))
+                    ats_scores.append(sub.analysis_result.get('ats_score', 0))
+                    missing_skills.extend(sub.analysis_result.get('missing_skills', []))
+
+            avg_match = sum(match_scores) / len(match_scores) if match_scores else 0
+            avg_ats = sum(ats_scores) / len(ats_scores) if ats_scores else 0
+
+            return {
                 'avg_match_score': round(avg_match, 2),
                 'avg_ats_score': round(avg_ats, 2),
                 'total_submissions': total,
                 'missing_skills': missing_skills
-            }]
+            }
         except Exception as e:
             print(f"Error calculating stats: {str(e)}")
-            return [{
-                '_id': None,
+            return {
                 'avg_match_score': 0,
                 'avg_ats_score': 0,
                 'total_submissions': 0,
                 'missing_skills': []
-            }]
+            }
+        finally:
+            session.close()
 
     @staticmethod
     def get_dashboard_stats():
