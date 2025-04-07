@@ -183,7 +183,15 @@ const MyResumes = () => {
                 <Button variant="outline" size="sm" asChild>
                   <Link
                     to={`/candidate-dashboard/resume/${analysis.id}`}
-                    state={{ analysis: analysis.fullAnalysis }}
+                    state={{ analysis: {
+                      jobTitle: analysis.jobTitle,
+                      matchPercentage: analysis.matchPercentage,
+                      atsScore: analysis.atsScore,
+                      matchedSkills: analysis.matchedSkills,
+                      missingSkills: analysis.missingSkills,
+                      feedback: analysis.feedback,
+                      analysisDate: analysis.analysisDate
+                    }}}
                   >
                     <span className="flex items-center">
                       View Detailed Analysis

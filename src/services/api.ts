@@ -22,6 +22,22 @@ export interface ResumeAnalysisResponse {
   match_score: number;
   ats_score: number;
   feedback: string;
+  id: string;
+  candidate_name: string;
+  candidate_email: string;
+  role: string;
+  analysis_sections?: {
+    experience: number;
+    education: number;
+    skills: number;
+    formatting: number;
+  };
+  keyword_density?: { [key: string]: number };
+  detailed_feedback?: {
+    strengths: string[];
+    weaknesses: string[];
+    improvements: string[];
+  };
 }
 
 export interface AnalysisResult {
