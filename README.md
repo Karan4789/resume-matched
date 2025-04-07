@@ -82,8 +82,6 @@ src/
 - Integration with real NLP models
 - Database storage with PostgreSQL or MongoDB
 
-## Please Refer the Branch : Jazz
-
 ## License
 
 This project is licensed under the MIT License.
